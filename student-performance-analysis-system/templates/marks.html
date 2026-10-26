@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Marks{% endblock %}
+{% block content %}
+<h1>Marks</h1>
+<section class="panel">
+<h2>Record or update marks</h2>
+{% if students and subjects %}
+<form method="post" class="form-grid four">
+<label>Student<select name="student_id" required>{% for s in students %}<option value="{{ s.student_id }}">{{ s.roll_no }} — {{ s.name }} ({{ s.section }})</option>{% endfor %}</select></label>
+<label>Subject<select name="subject_id" required>{% for s in subjects %}<option value="{{ s.subject_id }}">{{ s.subject_name }} (max {{ s.max_marks }})</option>{% endfor %}</select></label>
+<label>Assessment<input name="assessment" maxlength="80" value="Internal" required></label>
+<label>Marks obtained<input type="number" name="marks_obtained" min="0" step="0.01" required></label>
+<button type="submit">Save marks</button>
+</form>
+<p class="hint">The server checks the selected subject's maximum marks. The same student + subject + assessment updates the existing record.</p>
+{% else %}<p class="muted">First add at least one student and one subject.</p>{% endif %}
+</section>
+<section class="panel">
+<h2>Saved marks</h2>
+{% if marks %}<div class="table-wrap"><table><thead><tr><th>Roll no.</th><th>Student</th><th>Section</th><th>Subject</th><th>Assessment</th><th>Marks</th><th>Result</th><th></th></tr></thead><tbody>
+{% for m in marks %}<tr><td>{{ m.roll_no }}</td><td>{{ m.name }}</td><td>{{ m.section }}</td><td>{{ m.subject_name }}</td><td>{{ m.assessment }}</td><td>{{ m.marks_obtained }} / {{ m.max_marks }}</td><td>{% if m.marks_obtained|float >= m.pass_marks|float %}<span class="pill good">Pass</span>{% else %}<span class="pill bad">Fail</span>{% endif %}</td><td><form method="post" action="{{ url_for('delete_mark', mark_id=m.mark_id) }}" onsubmit="return confirm('Delete this marks record?')"><button class="danger small" type="submit">Delete</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">No marks saved yet.</p>{% endif %}
+</section>
+{% endblock %}

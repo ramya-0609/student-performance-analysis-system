@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Subjects{% endblock %}
+{% block content %}
+<h1>Subjects</h1>
+<div class="split">
+<section class="panel">
+<h2>Add subject</h2>
+<form method="post" class="form-grid">
+<label>Subject name<input name="subject_name" maxlength="120" required></label>
+<label>Maximum marks<input type="number" name="max_marks" min="0.01" step="0.01" required></label>
+<label>Pass marks<input type="number" name="pass_marks" min="0" step="0.01" required></label>
+<button type="submit">Add subject</button>
+</form>
+<p class="hint">Pass marks must be between zero and maximum marks. Subject names must be unique.</p>
+</section>
+<section class="panel">
+<h2>Configured subjects</h2>
+{% if subjects %}<div class="table-wrap"><table><thead><tr><th>Subject</th><th>Max</th><th>Pass</th><th>Action</th></tr></thead><tbody>
+{% for s in subjects %}<tr><td>{{ s.subject_name }}</td><td>{{ s.max_marks }}</td><td>{{ s.pass_marks }}</td><td><form method="post" action="{{ url_for('delete_subject', subject_id=s.subject_id) }}" onsubmit="return confirm('Delete subject and associated marks?')"><button class="danger small" type="submit">Delete</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">No subjects yet.</p>{% endif %}
+</section>
+</div>
+{% endblock %}

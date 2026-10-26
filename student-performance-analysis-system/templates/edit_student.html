@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Edit student{% endblock %}
+{% block content %}
+<h1>Edit student</h1>
+<section class="panel narrow">
+<form method="post" class="form-grid">
+<label>Roll number<input name="roll_no" value="{{ student.roll_no }}" required></label>
+<label>Full name<input name="name" value="{{ student.name }}" required></label>
+<label>Section / class<input name="section" value="{{ student.section }}" required></label>
+<div class="actions"><button type="submit">Save changes</button><a class="button secondary" href="{{ url_for('students') }}">Cancel</a></div>
+</form>
+</section>
+{% endblock %}

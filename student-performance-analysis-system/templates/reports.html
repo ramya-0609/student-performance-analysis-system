@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Performance reports</h1>
+<section class="panel">
+<form method="get" class="threshold-form">
+<label>Low-performance threshold (%)<input type="number" name="threshold" min="0" max="100" step="1" value="{{ threshold }}"></label>
+<button type="submit">Apply threshold</button>
+</form>
+<p class="hint">Summary percentage is the mean of each recorded assessment's percentage. Overall status is Pass only when every recorded assessment meets that subject's pass mark.</p>
+</section>
+<div class="cards">
+<article class="stat"><span>Mean marks</span><strong>{{ "%.2f"|format(stats.mean) }}</strong><small>Across stored mark records</small></article>
+<article class="stat"><span>Median marks</span><strong>{{ "%.2f"|format(stats.median) }}</strong><small>Across stored mark records</small></article>
+<article class="stat"><span>Mark range</span><strong>{{ "%.2f"|format(stats.minimum) }}–{{ "%.2f"|format(stats.maximum) }}</strong><small>Minimum to maximum</small></article>
+</div>
+<div class="charts">
+<section class="panel"><h2>Subject average</h2><img class="chart" src="data:image/png;base64,{{ avg_chart }}" alt="Bar chart of subject average percentages"></section>
+<section class="panel"><h2>Pass percentage</h2><img class="chart" src="data:image/png;base64,{{ pass_chart }}" alt="Bar chart of subject pass percentages"></section>
+</div>
+<section class="panel">
+<h2>Student performance</h2>
+{% if reports %}<div class="table-wrap"><table><thead><tr><th>Rank</th><th>Roll no.</th><th>Name</th><th>Section</th><th>Total</th><th>Average marks</th><th>Percentage</th><th>Grade</th><th>Status</th></tr></thead><tbody>
+{% for r in reports %}<tr {% if r.below_threshold %}class="low-row"{% endif %}><td>{{ loop.index }}</td><td>{{ r.roll_no }}</td><td>{{ r.name }}</td><td>{{ r.section }}</td><td>{{ "%.2f"|format(r.total) }} / {{ "%.2f"|format(r.max_total) }}</td><td>{{ "%.2f"|format(r.average) }}</td><td>{{ "%.2f"|format(r.percentage) }}%</td><td><strong>{{ r.grade }}</strong></td><td>{% if r.status == 'Pass' %}<span class="pill good">Pass</span>{% else %}<span class="pill bad">Fail</span>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="hint">Topper(s): {% set top = reports[0].percentage %}{% for r in reports if r.percentage == top %}{{ r.name }} ({{ r.roll_no }}){% if not loop.last %}, {% endif %}{% endfor %} — {{ "%.2f"|format(top) }}%.</p>
+{% else %}<p class="muted">Add marks to generate student reports and topper lists.</p>{% endif %}
+</section>
+<section class="panel">
+<h2>Students below {{ threshold }}%</h2>
+{% set low = reports|selectattr('below_threshold')|list %}
+{% if low %}<ul class="low-list">{% for r in low %}<li>{{ r.name }} ({{ r.roll_no }}, {{ r.section }}) — {{ "%.2f"|format(r.percentage) }}%</li>{% endfor %}</ul>{% else %}<p class="muted">No students below this threshold, or no mark records exist.</p>{% endif %}
+</section>
+<section class="panel">
+<h2>Subject-wise summary</h2>
+{% if subjects %}<div class="table-wrap"><table><thead><tr><th>Subject</th><th>Records</th><th>Average (%)</th><th>Pass (%)</th></tr></thead><tbody>
+{% for s in subjects %}<tr><td>{{ s.subject_name }}</td><td>{{ s.records_count }}</td><td>{{ "%.2f"|format(s.average_percentage or 0) }}%</td><td>{{ "%.2f"|format(s.pass_percentage or 0) }}%</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">No subject data yet.</p>{% endif %}
+</section>
+<section class="panel">
+<h2>Section-wise summary</h2>
+{% if sections %}<div class="table-wrap"><table><thead><tr><th>Section</th><th>Students</th><th>Average percentage</th></tr></thead><tbody>
+{% for s in sections %}<tr><td>{{ s.section }}</td><td>{{ s.students_count }}</td><td>{% if s.average_percentage is not none %}{{ "%.2f"|format(s.average_percentage) }}%{% else %}—{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Add students to see sections.</p>{% endif %}
+</section>
+{% endblock %}

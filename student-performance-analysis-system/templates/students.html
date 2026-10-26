@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<h1>Students</h1>
+<div class="split">
+<section class="panel">
+<h2>Add student</h2>
+<form method="post" class="form-grid">
+<label>Roll number<input name="roll_no" maxlength="30" required></label>
+<label>Full name<input name="name" maxlength="120" required></label>
+<label>Section / class<input name="section" maxlength="30" placeholder="e.g. CSE-A" required></label>
+<button type="submit">Add student</button>
+</form>
+</section>
+<section class="panel">
+<h2>Student records</h2>
+{% if students %}
+<div class="table-wrap"><table><thead><tr><th>Roll no.</th><th>Name</th><th>Section</th><th>Actions</th></tr></thead><tbody>
+{% for s in students %}<tr><td>{{ s.roll_no }}</td><td>{{ s.name }}</td><td>{{ s.section }}</td><td class="actions"><a href="{{ url_for('edit_student', student_id=s.student_id) }}">Edit</a><form method="post" action="{{ url_for('delete_student', student_id=s.student_id) }}" onsubmit="return confirm('Delete this student and all their marks?')"><button class="danger small" type="submit">Delete</button></form></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<p class="muted">No students yet. Add your first student using the form.</p>{% endif %}
+</section>
+</div>
+{% endblock %}

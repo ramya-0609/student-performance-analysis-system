@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Student Performance{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">ACADEMIC ANALYTICS</p>
+  <h1>Understand performance. Support every student.</h1>
+  <p>Manage student records, record assessment marks, and turn stored data into clear academic summaries.</p>
+  <a class="button" href="{{ url_for('reports') }}">View reports →</a>
+</section>
+<div class="cards">
+  <article class="stat"><span>Students</span><strong>{{ counts.students }}</strong><small>Student profiles</small></article>
+  <article class="stat"><span>Subjects</span><strong>{{ counts.subjects }}</strong><small>Configured subjects</small></article>
+  <article class="stat"><span>Mark records</span><strong>{{ counts.marks }}</strong><small>Saved assessments</small></article>
+</div>
+<section class="panel">
+  <h2>Getting started</h2>
+  <ol>
+    <li>Add student profiles and their sections.</li>
+    <li>Add subjects with maximum and pass marks.</li>
+    <li>Record marks for each student, subject, and assessment.</li>
+    <li>Open Reports to see grades, toppers, low performers, and charts.</li>
+  </ol>
+</section>
+{% endblock %}
